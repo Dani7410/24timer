@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 import java.util.Set;
 
+@CrossOrigin(origins = "*")
+
 @RestController
+//@RequestMapping("/app-api/students")
 public class RestStudentController {
 
 
@@ -44,24 +47,46 @@ public class RestStudentController {
 
     // create a new student
     @CrossOrigin(origins = "*", exposedHeaders = "Location")
-    @PostMapping(value = "/student", consumes = {"appplication/json"})
+    @PostMapping(value = "/student", consumes = {"application/json"})
     public ResponseEntity<String> create(@RequestBody Student stu) {
         Student _student = new Student(stu.getName(), stu.getEmail(), stu.getSuperviser());
 
         studentRepository.save(_student);
-        return ResponseEntity.status(201).header("Location", "/student/" + stu.getId()).body("{'Msg': 'post created'}");
+        return ResponseEntity.status(201).header("Location", "/student/" + _student.getId()).body("{'Msg': 'post created'}");
 
     }
 
     //update target
-    @PutMapping("/recipe/{id}")
-    public RequestEntity<String> update(@PathVariable("id") Long id, @RequestBody Student stu){
+    @PutMapping("/student/{id}")
+    public ResponseEntity<String> update(@PathVariable("id") Long id, @RequestBody Student stu){
         //get student by id
         Optional<Student>optionalStudent = studentRepository.findById(id);
         if(!optionalStudent.isPresent()){
-            return ResponseEntity.status(404).body("{'")
+
+            return ResponseEntity.status(404).body("{'msg':'Not found'");
         }
+        studentRepository.save(stu);
+        return ResponseEntity.status(204).body("{'msg':'Updated'}");
     }
+
+    @DeleteMapping("/student/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        Optional<Student> student = studentRepository.findById(id);
+        if(!student.isPresent()){
+            return ResponseEntity.status(404).body("{'msg':'Not found'"); // Not found
+        }
+        Student stu = student.get();
+        //studentRepository.save(stu);
+        studentRepository.deleteById(id);
+        studentRepository.save(stu);
+        return ResponseEntity.status(200).body("{'msg':'Deleted'}");
+    }
+
+
+
+
+
+
 
 
 

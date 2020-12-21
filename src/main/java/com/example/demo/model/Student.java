@@ -17,8 +17,7 @@ public class Student {
     private String name;
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="student_superviser")
     private Superviser superviser;
 
@@ -38,6 +37,8 @@ public class Student {
     public void setId(long id) {
         this.id = id;
     }
+
+
 
     public String getName() {
         return name;
